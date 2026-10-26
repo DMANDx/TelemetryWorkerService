@@ -15,9 +15,7 @@ namespace TelemetryWorkerService.Tests;
 public class TelemetryPublisherWorkerTests : IAsyncLifetime
 {
     // Поднимаем изолированный Docker-контейнер RabbitMQ для тестов издателя
-    private readonly RabbitMqContainer _rabbitMqContainer = new RabbitMqBuilder()
-        .WithImage("rabbitmq:3-management")
-        .Build();
+    private readonly RabbitMqContainer _rabbitMqContainer = new RabbitMqBuilder("rabbitmq:3-management").Build();
 
     public async Task InitializeAsync() => await _rabbitMqContainer.StartAsync();
     public async Task DisposeAsync() => await _rabbitMqContainer.DisposeAsync();
