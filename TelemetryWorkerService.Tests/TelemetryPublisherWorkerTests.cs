@@ -9,6 +9,8 @@ using TelemetryWorkerService;
 using Testcontainers.RabbitMq;
 using Xunit;
 
+
+//частично комментуирую пока
 public class TelemetryPublisherWorkerTests : IAsyncLifetime
 {
     // Поднимаем изолированный Docker-контейнер RabbitMQ для тестов издателя
