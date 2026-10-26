@@ -10,6 +10,7 @@ using Testcontainers.RabbitMq;
 using Xunit;
 
 
+namespace TelemetryWorkerService.Tests;
 //частично комментуирую пока
 public class TelemetryPublisherWorkerTests : IAsyncLifetime
 {
