@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../TelemetryWorkerService.Tests/TelemetryWorkerService.Tests.csproj" Id="c86a09e9-b8e0-4d23-b5e7-f0203e29571f" />
+  <Project Path="TelemetryWorkerService.csproj" />
+</Solution>
