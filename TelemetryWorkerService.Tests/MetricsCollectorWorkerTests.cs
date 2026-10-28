@@ -12,6 +12,7 @@ using Xunit;
 public class MetricsCollectorWorkerTests : IAsyncLifetime
 {
     // Описываем контейнер RabbitMQ для Testcontainers
+    [Obsolete]
     private readonly RabbitMqContainer _rabbitMqContainer = new RabbitMqBuilder()
         .WithImage("rabbitmq:3-management")
         .Build();
@@ -23,6 +24,7 @@ public class MetricsCollectorWorkerTests : IAsyncLifetime
     public async Task DisposeAsync() => await _rabbitMqContainer.DisposeAsync();
 
     [Fact]
+    [Obsolete]
     public async Task Worker_ShouldConsumeAndAck_ValidTelemetryMessage()
     {
         // 1. Arrange: Получаем адрес из Docker и настраиваем тестовую фабрику

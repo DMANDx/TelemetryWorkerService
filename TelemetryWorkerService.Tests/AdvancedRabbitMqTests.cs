@@ -10,7 +10,7 @@ using RabbitMQ.Client;
 using TelemetryWorkerService;
 using Testcontainers.RabbitMq;
 using Testcontainers.Toxiproxy;
-using DotNet.Testcontainers.Builders; // Базовый неймспейс для NetworkBuilder
+using DotNet.Testcontainers.Builders;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -25,7 +25,8 @@ public class AdvancedRabbitMqTests : IAsyncLifetime
     private readonly RabbitMqContainer _rabbitMqContainer;
     private readonly ToxiproxyContainer _toxiproxyContainer;
 
-    public AdvancedRabbitMqTests(ITestOutputHelper output)
+        [Obsolete]
+        public AdvancedRabbitMqTests(ITestOutputHelper output)
     {
         _output = output;
 
@@ -35,7 +36,7 @@ public class AdvancedRabbitMqTests : IAsyncLifetime
             builder.AddProvider(new XunitLoggerProvider(output));
         });
 
-        // ИСПРАВЛЕНИЕ: Используем актуальный NetworkBuilder вместо старого DockerNetworkBuilder
+        // актуальный NetworkBuilder вместо старого DockerNetworkBuilder
         var network = new NetworkBuilder().Build();
 
         _rabbitMqContainer = new RabbitMqBuilder()
@@ -50,15 +51,13 @@ public class AdvancedRabbitMqTests : IAsyncLifetime
     }
 
     public async Task InitializeAsync()
-    {
-        // ИСПРАВЛЕНИЕ: Избавляемся от Task.WhenAll, так как методы возвращают ValueTask
+    {      
         await _rabbitMqContainer.StartAsync();
         await _toxiproxyContainer.StartAsync();
     }
 
     public async Task DisposeAsync()
-    {
-        // ИСПРАВЛЕНИЕ: Последовательный await для структур ValueTask
+    {        
         await _rabbitMqContainer.DisposeAsync();
         await _toxiproxyContainer.DisposeAsync();
         _loggerFactory.Dispose();
@@ -132,8 +131,7 @@ public class AdvancedRabbitMqTests : IAsyncLifetime
         _output.WriteLine("!!! АВАРИЯ: Разрываем соединение в Toxiproxy (сеть упала) !!!");
 
         using (var client = new System.Net.Http.HttpClient())
-        {
-            // ИСПРАВЛЕНИЕ: Используем _toxiproxyContainer.Hostname вместо GetHostname()
+        {            
             var proxAddr = _toxiproxyContainer.Hostname + ":" + _toxiproxyContainer.GetMappedPublicPort(8474);
 
             // Отправляем команду на отключение прокси-линка брокера
@@ -151,8 +149,7 @@ public class AdvancedRabbitMqTests : IAsyncLifetime
         // 3. Включаем сеть обратно через HTTP API
         _output.WriteLine("=== РЕМОНТ: Сеть восстановлена. Ожидаем Авто-Восстановление RabbitMQ.Client ===");
         using (var client = new System.Net.Http.HttpClient())
-        {
-            // ИСПРАВЛЕНИЕ: Используем _toxiproxyContainer.Hostname вместо GetHostname()
+        {            
             var proxAddr = _toxiproxyContainer.Hostname + ":" + _toxiproxyContainer.GetMappedPublicPort(8474);
 
             // Отправляем команду на включение прокси-линка обратно
@@ -163,7 +160,7 @@ public class AdvancedRabbitMqTests : IAsyncLifetime
         // Даем драйверу RabbitMQ.Client время обнаружить сеть и переподключить внутренние сокеты
         await Task.Delay(3000);
 
-        // Проверяем: Успешный пассивный запрос к очереди докажет, что воркер и наш тестовый канал восстановились!
+        // Проверяем: Успешный пассивный запрос к очереди докажет, что воркер и наш тестовый канал восстановились
         var recoveredQueue = await testChannel.QueueDeclarePassiveAsync("collector.metrics.vs");
         _output.WriteLine("Сеть поднялась, сокеты восстановили работу автоматически!");
 

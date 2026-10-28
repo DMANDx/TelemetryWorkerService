@@ -13,7 +13,8 @@ namespace TelemetryWorkerService
     public class TelemetryPublisherWorker : BackgroundService
     {
         private readonly ILogger<TelemetryPublisherWorker> _logger;
-        private readonly ConnectionFactory _connectionFactory; // <-- Добавляем фабрику
+        //фабрик
+        private readonly ConnectionFactory _connectionFactory;
         private const string ExchangeName = "telemetry.topic";
         private const string RoutingKey = "metrics.apps.visualstudio";
         private IConnection? _connection;
@@ -27,8 +28,7 @@ namespace TelemetryWorkerService
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)
-        {
-            // Старый блок 'var factory = new ConnectionFactory() { ... }' удален!
+        {            
 
             try
             {
